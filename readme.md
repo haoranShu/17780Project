@@ -44,7 +44,8 @@ Series and DataFrames are the core data structures of Pandas. They both are inde
 
     # and more...
 ~~~~
-* There are simply too many ways to index and select from the DataFrames/Series and they are messed up. Different syntaxes have no hint of what kind of indexing (by column or by row, by name or by number) they do and some syntactic sugar applies only to restricted cases. DataFrame.loc and DataFrame.iloc are class methods but they should be used with [] instead of (), which is very counter-intuitive and easy to get wrong. Again, it is expensive to have a typo with Python, because there is no compiler to check that for us.
+* There are simply too many ways to index and select from the DataFrames/Series and they are messed up. Different syntaxes have no hint of what kind of indexing they do (by column or by row, by name or by number) and some syntactic sugar applies only to restricted cases.
+* DataFrame.loc and DataFrame.iloc are class methods but they are used with [] instead of (), which is very counter-intuitive and easy to get wrong. Again, it is expensive to have a typo in Python, because there is no compiler to check that for us.
 * People can argue that one can stick to only one or two methods of indexing and selection so he/she will eventually get used to the syntax, but it would still be hard to read other people's code if they have chosen to use a different set of indexing methods.
 * Iterations could be done in the following way
 ~~~~
@@ -53,6 +54,7 @@ Series and DataFrames are the core data structures of Pandas. They both are inde
             . . .
 
     # or
+
     for row_label, row in df.iterrows():                # row is a Series
         for col_label, entry in row.iteritems():        # entry is an element
             . . .
@@ -63,9 +65,24 @@ It is clear that DataFrame.iteritems() should have been named as DataFrame.iterc
 * Remove redundant indexing methods
 * Rename iteration methods
 
-### Computation of derived statistics
+### Computation of descriptive statistics
+
+It is common usecase to compute some descriptive statistics from a Series or some columns/rows of a DataFrame, for example, [mean](https://pandas.pydata.org/pandas-docs/version/0.23.4/generated/pandas.DataFrame.mean.html#pandas.DataFrame.mean). There are more than several dozens of similar methods and there are a couple of problems with these APIs.
+
+* These computations could be applied either along rows or along columns, and this configuration is indicated by a numeric flag in the function call: 0 for index (row) and 1 for columns. Even the documentation itself is ambiguous: does "1 for columns" mean the statistic will be computed along each column or across each column? The resulting user code is just unreadable and usually requires the programmer to leave a comment.
+
+* MultiIndex always requires special care and one parameter is dedicated to that matter (in a lot of other APIs as well).
+
+* Parameter *numeric_only* is rarely of any use, and when it is, actually encourages poor programming practices and yields unreliable results
+
+**Possible Solutions**
+* Reflect axis in function name or change numeric flag to enums
+* Remove unnecessary and rarely used parameters
+* Currently cannot think of a great way to address the MultiIndex problem
 
 ### Examples of user code
+
+**Usecase 1: **
 
 ## Part II. Groupby: a powerful API made hard to use
 
