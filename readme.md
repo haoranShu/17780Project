@@ -14,15 +14,28 @@ Series and DataFrames are the core data structures of Pandas. They both are inde
 ### Construction
 
 * These objects could be constructed by either constructors or factories and the factories only cover a small part of all object creation use cases, which is a wierd thing by itself.
-* Also, the authors of the API tried hard to make the constructors as versatile and powerful as possible by adding a bunch of optional parameters. To make it worse, often times these parameters are boolean or string flags. For example, the [DatetimeIndex constructor](https://pandas.pydata.org/pandas-docs/version/0.23.4/generated/pandas.DatetimeIndex.html#pandas.DatetimeIndex) accepts as many as 12 parameters, 3 of them being boolean flags and 4 of them are *possibly* strings.
+* Also, the authors of the API tried hard to make the constructors as versatile and powerful as possible by adding a bunch of optional parameters. To make it worse, often times these parameters are boolean or string flags. For example, the [DatetimeIndex constructor](https://pandas.pydata.org/pandas-docs/version/0.23.4/generated/pandas.DatetimeIndex.html#pandas.DatetimeIndex) accepts as many as 12 parameters, 3 of them being boolean flags and 4 of them are *possibly* strings. Note that string flags are especially bad for Python because the program will only fail at run-time if there is a typo in the string. Enum flags, however, will be checked by IDE.
 * Last but not least, some constructors also include functionalities that should have been decoupled. For example, the [DataFrame constructor](https://pandas.pydata.org/pandas-docs/version/0.23.4/generated/pandas.DataFrame.html#pandas.DataFrame) also is able to convert the input data source to another data type. 
 
 **Possible solutions**
 * Provide more factories to cover all use cases and prohibit the direct use of constructors
 * Provide builders for objects that have too many optional parameters
+* Provide enums for flags
 * Decouple functionalities that are not essentially relevant to objecgt creation into separate class methods
 
 ### Indexing and Iteration
+
+* Indexing could be done in the following ways
+~~~~
+    df[column_name]                         # select one column from DataFrame, returns Series
+
+    df[[column_name1, column_name2]]        # select multiple columns from DataFrame, returns DataFrame
+
+    df.column_name                          # select one column from DataFrame, returns Series
+                                            # can only be used for column_names containing no spaces
+
+    df.loc[row_names, column_names]
+~~~~
 
 ### Computation of derived statistics
 
