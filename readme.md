@@ -9,7 +9,7 @@ The library is too big for us to redesign, thus we will focus on the fixing the 
 
 ## Part I. Series, DataFrame and Index: the building blocks
 
-Series and DataFrames are the core data structures of Pandas. They both are indexed by indexed objects, and DataFrames have one row index and one column index. Different from what people might usually assume about indices, in Pandas all indices could contain duplicate entries, which we will discuss in Part III. Also, multiple kinds of indices are supported, the most popular ones being DatetimeIndex, MultiIndex and general object Index. We found there is a lot of space for improving the API surrounding these Data Structures but we will be focusing on the following three aspects.
+Series and DataFrames are the core data structures of Pandas. They both are indexed by Index objects, and DataFrames have one row index and one column index. Different from what people might usually assume about indices, in Pandas all indices could contain duplicate entries, which we will discuss in Part III. Also, multiple kinds of indices are supported, the most popular ones being DatetimeIndex, MultiIndex and general object Index. We found there is a lot of space for improving the API surrounding these Data Structures but we will be focusing on the following three aspects.
 
 ### Construction
 
