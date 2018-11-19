@@ -70,7 +70,13 @@ It is clear that DataFrame.iteritems() should have been named as DataFrame.iterc
 It is common usecase to compute some descriptive statistics from a Series or some columns/rows of a DataFrame, for example, [mean](https://pandas.pydata.org/pandas-docs/version/0.23.4/generated/pandas.DataFrame.mean.html#pandas.DataFrame.mean). There are more than several dozens of similar methods and there are a couple of problems with these APIs.
 
 * These computations could be applied either along rows or along columns, and this configuration is indicated by a numeric flag in the function call: 0 for index (row) and 1 for columns. Even the documentation itself is ambiguous: does "1 for columns" mean the statistic will be computed along each column or across each column? The resulting user code is just unreadable and usually requires the programmer to leave a comment.
+~~~~
+    # get mean of each column in a dataframe
+    df.mean(axis=0)
 
+    #get mean of each row in a dataframe
+    df.mean(axis=1)
+~~~~
 * MultiIndex always requires special care and one parameter is dedicated to that matter (in a lot of other APIs as well).
 
 * Parameter *numeric_only* is rarely of any use, and when it is, actually encourages poor programming practices and yields unreliable results
@@ -79,10 +85,6 @@ It is common usecase to compute some descriptive statistics from a Series or som
 * Reflect axis in function name or change numeric flag to enums
 * Remove unnecessary and rarely used parameters
 * Currently cannot think of a great way to address the MultiIndex problem
-
-### Examples of user code
-
-**Usecase 1: **
 
 ## Part II. Groupby: a powerful API made hard to use
 
