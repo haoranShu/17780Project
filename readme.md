@@ -7,35 +7,35 @@ The API, though powerful, could be hard to use and easy to misuse in some cases.
 The library is too big for us to redesign, thus we will focus on the fixing the APIs related to Series, DataFrame and Index, which are the core data structures of the API. Also, we will try to improve the Groupby API, which is one of the most commonly used functionality of the library.
 
 
-## Part I: Series, DataFrame and Index: the building blocks
+## Part I. Series, DataFrame and Index: the building blocks
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+Series and DataFrames are the core data structures of Pandas. They both are indexed by indexed objects, and DataFrames have one row index and one column index. Different from what people might usually assume about indices, in Pandas all indices could contain duplicate entries, which we will discuss in Part III. Also, multiple kinds of indices are supported, the most popular ones being DatetimeIndex, MultiIndex and general object Index. We found there is a lot of space for improving the API surrounding these Data Structures but we will be focusing on the following three aspects.
 
-### Prerequisites
+### Construction
 
-What things you need to install the software and how to install them
 
-```
-Give examples
-```
 
-### Installing
+### Indexing and Iteration
 
-A step by step series of examples that tell you how to get a development env running
+### Computation of derived statistics
 
-Say what the step will be
+### Examples of user code
 
-```
-Give the example
-```
+## Part II. Groupby: a powerful API made hard to use
 
-And repeat
+### Parameter Explosion
 
-```
-until finished
-```
+### Inconsistent behavior between Groupers and Groupby
 
-End with an example of getting some data out of the system or using it for a little demo
+### Limitations of Groupby with mappings
+
+### Examples of user code
+
+## Part III. Discussion of whether duplicate indices should be allowed in Series and DataFrames
+
+### Undefined or Ill-defined Behaviors
+
+### Examples of user code
 
 ## Pandas documentation
 
