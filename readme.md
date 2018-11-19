@@ -13,7 +13,7 @@ Series and DataFrames are the core data structures of Pandas. They both are inde
 
 ### Construction
 
-    These objects could be constructed by either constructors or factories, which is a wierd thing by itself. Also, the authors of the API tried hard to make the constructors as versatile and powerful as possible by adding a bunch of optional parameters. To make it worse, often times these parameters are boolean or string flags. For example the [DatetimeIndex constructor](https://pandas.pydata.org/pandas-docs/version/0.23.4/generated/pandas.DatetimeIndex.html#pandas.DatetimeIndex) accepts as many as 12 parameters, 3 of them being boolean flags and 4 of them are *possibly* strings. Last but not lease, some constructors also include functionalities that should have been decoupled from the 
+These objects could be constructed by either constructors or factories, which is a wierd thing by itself. Also, the authors of the API tried hard to make the constructors as versatile and powerful as possible by adding a bunch of optional parameters. To make it worse, often times these parameters are boolean or string flags. For example the [DatetimeIndex constructor](https://pandas.pydata.org/pandas-docs/version/0.23.4/generated/pandas.DatetimeIndex.html#pandas.DatetimeIndex) accepts as many as 12 parameters, 3 of them being boolean flags and 4 of them are *possibly* strings. Last but not lease, some constructors also include functionalities that should have been decoupled from the 
 
 ### Indexing and Iteration
 
