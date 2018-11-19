@@ -1,6 +1,11 @@
-# Project Title
+# Assigment 3: Improving the Pandas API
 
-One Paragraph of project description goes here
+We propose to improve the Pandas API, which is an open source library providing high-performance, easy-to-use data structures and data analysis tools for Python. The API is widely in use by data scientists and is renowned for its power in analyzing time series like data.
+
+The API, though powerful, could be hard to use and easy to misuse in some cases. Also, the resulting user code can sometimes be unreadable, given the number of parameters of a method and the abuse of int, string and boolean flags instead of enums. (This problem is worse with Python because it does not need to be compiled, but if you use an IDE, enums will be in different color) Last but not least, we contend that some sematic of the API is flawed and users can make mistakes and not discover them forever.
+
+The library is too big for us to redesign, thus we will focus on the fixing the APIs related to Series, DataFrame and Index, which are the core data structures of the API. Also, we will try to improve the Groupby API, which is one of the most commonly used functionality of the library.
+
 
 ## Getting Started
 
