@@ -25,17 +25,43 @@ Series and DataFrames are the core data structures of Pandas. They both are inde
 
 ### Indexing and Iteration
 
-* Indexing could be done in the following ways
+* Indexing could be done in the following ways for DataFrames:
 ~~~~
     df[column_name]                         # select one column from DataFrame, returns Series
 
     df[[column_name1, column_name2]]        # select multiple columns from DataFrame, returns DataFrame
 
+    df[a:b]                                 # select multiple rows from DataFrame by row numbers
+
+    df[row_name1:row_name2]                 # select multiple rows from DataFrame by row names
+
     df.column_name                          # select one column from DataFrame, returns Series
                                             # can only be used for column_names containing no spaces
 
-    df.loc[row_names, column_names]
+    df.loc[row_names, column_names]         # select by row names and column names, returns DataFrame
+
+    df.iloc[row_numbers, column_numbers]    # select by row numbers and column numbers, returns DataFrame
+
+    # and more...
 ~~~~
+* There are simply too many ways to index and select from the DataFrames/Series and they are messed up. Different syntaxes have no hint of what kind of indexing (by column or by row, by name or by number) they do and some syntactic sugar applies only to restricted cases. DataFrame.loc and DataFrame.iloc are class methods but they should be used with [] instead of (), which is very counter-intuitive and easy to get wrong. Again, it is expensive to have a typo with Python, because there is no compiler to check that for us.
+* People can argue that one can stick to only one or two methods of indexing and selection so he/she will eventually get used to the syntax, but it would still be hard to read other people's code if they have chosen to use a different set of indexing methods.
+* Iterations could be done in the following way
+~~~~
+    for col_label, col in df.iteritems():               # col is a Series
+        for row_label, entry in col.iteritems():        # entry is an element
+            . . .
+
+    # or
+    for row_label, row in df.iterrows():                # row is a Series
+        for col_label, entry in row.iteritems():        # entry is an element
+            . . .
+~~~~
+It is clear that DataFrame.iteritems() should have been named as DataFrame.itercols().
+
+**Possible Solutions**
+* Remove redundant indexing methods
+* Rename iteration methods
 
 ### Computation of derived statistics
 
