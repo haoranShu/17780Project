@@ -4,20 +4,21 @@ We propose to improve the Pandas API, which is an open source library providing 
 
 The API, though powerful, could be hard to use and easy to misuse in some cases. Also, the resulting user code can sometimes be unreadable, given the often long parameter lists of methods and constructors, and the abuse of int, string and boolean flags instead of enums. Last but not least, we contend that some sematic of the API is flawed and users can easily make mistakes and not discover them forever.
 
-The library is too big for us to redesign, thus we will focus on the fixing the APIs related to Series, DataFrame and Index, which are the core data structures of the API. Also, we will try to improve the Groupby API, which is one of the most commonly used functionality of the library.
+The library is too big for us to redesign, thus we will focus on fixing some APIs related to Series, DataFrame and Index, which are the core data structures of the API. Also, we will try to improve the Groupby API, which is one of the most commonly used functionality of the library.
 
 
-## Part I. Series, DataFrame and Index: the building blocks
+## Part I. DataFrame and DatetimeIndex
 
-Series and DataFrames are the core data structures of Pandas. They both are indexed by Index objects, and DataFrames have one row index and one column index. Different from what people might usually assume about indices, in Pandas all indices could contain duplicate entries, which we will discuss in Part III. Also, multiple kinds of indices are supported, the most popular ones being DatetimeIndex, MultiIndex and general object Index. We found there is a lot of space for improving the API surrounding these Data Structures but we will be focusing on the following three aspects.
+DataFrames is the core data structures of Pandas. It is indexed by Index objects, and DataFrames have one row index and one column index. Different from what people might usually assume about indices, in Pandas all indices could contain duplicate entries. Also, multiple kinds of indices are supported, the most popular ones being DatetimeIndex, MultiIndex and general object Index. We found there is a lot of space for improving the API surrounding these Data Structures but we will be focusing on the following three aspects.
 
 ### Construction
 
-* These objects could be constructed by either constructors or factories and the factories only cover a small part of all object creation use cases, which is a wierd thing by itself.
-* Also, the authors of the API tried hard to make the constructors as versatile and powerful as possible by adding a bunch of optional parameters. To make it worse, often times these parameters are boolean or string flags. For example, the [DatetimeIndex constructor](https://pandas.pydata.org/pandas-docs/version/0.23.4/generated/pandas.DatetimeIndex.html#pandas.DatetimeIndex) accepts as many as 12 parameters, 3 of them being boolean flags and 4 of them are *possibly* strings. Note that string flags are especially bad for Python because the program will only fail at run-time if there is a typo in the string. Enum flags, however, will be checked by IDE.
+* Currently, these objects could be constructed by either constructors or factories and the factories only cover a small part of all object creation use cases, which is a wierd thing by itself.
+* Also, the authors of the API tried hard to make the constructors as versatile and powerful as possible by adding a bunch of optional parameters with default values. To make it worse, often times these parameters are boolean or string flags. For example, the [DatetimeIndex constructor](https://pandas.pydata.org/pandas-docs/version/0.23.4/generated/pandas.DatetimeIndex.html#pandas.DatetimeIndex) accepts as many as 12 parameters, 3 of them being boolean flags and 4 of them are *possibly* strings. Note that string flags are especially bad for Python because the program will only fail at run-time if there is a typo in the string. Enum flags, however, will be checked by IDE. This is partly because [Enum](https://www.python.org/dev/peps/pep-0435/) was added to Python only a few years ago.
 * Last but not least, some constructors also include functionalities that should have been decoupled. For example, the [DataFrame constructor](https://pandas.pydata.org/pandas-docs/version/0.23.4/generated/pandas.DataFrame.html#pandas.DataFrame) also is able to convert the input data source to another data type. 
 
 **Possible solutions**
+
 * Provide more factories to cover all use cases and prohibit the direct use of constructors
 * Provide builders for objects that have too many optional parameters
 * Provide enums for flags
@@ -44,7 +45,7 @@ Series and DataFrames are the core data structures of Pandas. They both are inde
 
     # and more...
 ~~~~
-* There are simply too many ways to index and select from the DataFrames/Series and they are messed up. Different syntaxes have no hint of what kind of indexing they do (by column or by row, by name or by number) and some syntactic sugar applies only to restricted cases.
+* There are simply too many ways to index and select from the DataFrames and they are messed up. Different syntaxes have no hint of what kind of indexing they do (by column or by row, by name or by number) and some syntactic sugar applies only to restricted cases.
 * People can argue that one can stick to only one or two methods of indexing and selection so he/she will eventually get used to the syntax, but it would still be hard to read other people's code if they have chosen to use a different set of indexing methods.
 * Iterations could be done in the following way
 ~~~~
@@ -120,6 +121,7 @@ This difference is not found in the documentation, but might lead to horrible re
 
     # attempt 1
     meanprice = stockprice.groupby(Grouper('date', freq='1D')).mean()
+    
     # result:
     #                price
     #       date    
@@ -147,7 +149,7 @@ This difference is not found in the documentation, but might lead to horrible re
     # desired result but is unnecessarily spoilerplate. We should have had the merits
     # of both.
 ~~~~
-The empty group behavior is sometimes desirable and sometimes not. The fact that Grouper cannot take a mapper makes it hard to have an empty group when we actually want to, like in the following usecase.
+The empty group with NaN as value behavior is sometimes desirable and sometimes not. The fact that Grouper cannot take a mapper makes it hard to have an empty group when we actually want to, like in the following usecase:
 ~~~~
     # Usecase: Given DataFrame A indexed by Andrew ID, with columns Score, Major and Year of Study,
     #          want to get the average score for groups ‘under year 3’, ‘year 3’, and ‘year 4 or above’
@@ -175,6 +177,7 @@ The empty group behavior is sometimes desirable and sometimes not. The fact that
 This code is purely evil.
 
 **Possible solutions**
+
 * Decouple orthogonal functionalities from both groupby() and Grouper API
 * Document the different behavior and add new parameters to control the behavior
 
