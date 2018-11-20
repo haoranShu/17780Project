@@ -99,17 +99,84 @@ Some options, like sort, are actually orthogonal functionalities that should hav
 
 ### Inconsistent behavior between Groupers and Groupby
 
-The semantics of Groupers and groupby() are subtly different and may lead to unexpected results. Grouper objects define a set of groups and then 
+The semantics of Groupers and groupby() are subtly different and may lead to unexpected results. Grouper objects define a set of groups and then bin the rows into their corresponding bins and thus there could be empty groups, auto-filled with NaN for any subsequent computations. The method groupby(), however, maps rows according to a specific mapper on the index of the DataFrame and will never result in an empty group.
 
-### Limitations of Groupby with mappings
+This difference is not found in the documentation, but might lead to horrible results, especially if NaN set to be filled by 0 somewhere in the code later on. The following usecase illustrates why this could be disastrous.
+~~~~
+    # Usecase: compute the intra-day mean stock price of Google
+    #
+    # Note that stock price data is only available for weekdays
+    #
+    #    stockprice layout:
+    #                            price
+    #       date    
+    #    2018-10-04 09:10:12     1000.0
+    #    2018-10-04 11:12:13     1000.0
+    #    2018-10-05 10:00:03     1020.0
+    #    2018-10-05 12:23:41     1020.0
+    #    2018-10-05 16:39:12     1020.0
+    #    2018-10-08 15:34:54      998.0
+    #
 
-### Examples of user code
+    # attempt 1
+    meanprice = stockprice.groupby(Grouper('date', freq='1D')).mean()
+    # result:
+    #                price
+    #       date    
+    #    2018-10-04  1000.0
+    #    2018-10-05  1020.0
+    #    2018-10-06     NaN
+    #    2018-10-07     NaN
+    #    2018-10-08   998.0
+    #
+    
+    # attempt 2
+    def mapper(date):
+        return date.year*10000 + date.month*100 + date.day
 
-## Part III. Discussion of whether duplicate indices should be allowed in Series and DataFrames
+    meanprice = stockprice.groupby(mapper).mean()
+    # result:
+    #                price
+    #       date    
+    #    20181004  1000.0
+    #    20181005  1020.0
+    #    20181008   998.0
+    #
 
-### Undefined or Ill-defined Behaviors
+    # Attempt 1 is prettier but the result is not what we wanted, attempt 2 yields the
+    # desired result but is unnecessarily spoilerplate. We should have had the merits
+    # of both.
+~~~~
+The empty group behavior is sometimes desirable and sometimes not. The fact that Grouper cannot take a mapper makes it hard to have an empty group when we actually want to, like in the following usecase.
+~~~~
+    # Usecase: Given DataFrame A indexed by Andrew ID, with columns Score, Major and Year of Study,
+    #          want to get the average score for groups ‘under year 3’, ‘year 3’, and ‘year 4 or above’
+    #          if no student in such group, fill NaN
 
-### Examples of user code
+    # attempt
+    import numpy as np
+
+    def mapper(year):
+        if year <= 2:
+            return ‘Under Year 2’
+        elif year > 3:
+            return ‘Year 3’
+        else:
+            return ‘Year 4 and Above’
+
+    year_groups = [‘Under Year 2’, ‘Year 3’, ‘Year 4 and Above’]
+
+    mean_by_year = A[[‘Year of Study’, ‘Score’]].set_index(‘Year of Study’).Groupby(mapper).mean()
+
+    for year in year_groups:
+        if year not in mean_by_year.index:
+            mean_by_year.loc[year] = np.NaN
+~~~~
+This code is purely evil.
+
+**Possible solutions**
+* Decouple orthogonal functionalities from both groupby() and Grouper API
+* Document the different behavior and add new parameters to control the behavior
 
 ## Pandas documentation
 
