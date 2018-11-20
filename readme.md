@@ -45,7 +45,6 @@ Series and DataFrames are the core data structures of Pandas. They both are inde
     # and more...
 ~~~~
 * There are simply too many ways to index and select from the DataFrames/Series and they are messed up. Different syntaxes have no hint of what kind of indexing they do (by column or by row, by name or by number) and some syntactic sugar applies only to restricted cases.
-* DataFrame.loc and DataFrame.iloc are class methods but they are used with [] instead of (), which is very counter-intuitive and easy to get wrong. Again, it is expensive to have a typo in Python, because there is no compiler to check that for us.
 * People can argue that one can stick to only one or two methods of indexing and selection so he/she will eventually get used to the syntax, but it would still be hard to read other people's code if they have chosen to use a different set of indexing methods.
 * Iterations could be done in the following way
 ~~~~
@@ -74,7 +73,7 @@ It is common usecase to compute some descriptive statistics from a Series or som
     # get mean of each column in a dataframe
     df.mean(axis=0)
 
-    #get mean of each row in a dataframe
+    # get mean of each row in a dataframe
     df.mean(axis=1)
 ~~~~
 * MultiIndex always requires special care and one parameter is dedicated to that matter (in a lot of other APIs as well).
@@ -88,9 +87,19 @@ It is common usecase to compute some descriptive statistics from a Series or som
 
 ## Part II. Groupby: a powerful API made hard to use
 
+Groupby is a commonly used tool in Pandas to divide rows of a DataFrame into groups and then do some useful computation based on each group. However, several design mistakes make groupby hard to use in some common usecases. Sometimes we have to write clutter code to achieve a simple purpose.
+
+Pandas also provides a Grouper object to feed to the groupby() method but there are some problems there as well.
+
 ### Parameter Explosion
 
+Documentation for both [groupby()](https://pandas.pydata.org/pandas-docs/version/0.23.4/generated/pandas.DataFrame.groupby.html#pandas.DataFrame.groupby) and [Grouper constructor](https://pandas.pydata.org/pandas-docs/version/0.23.4/generated/pandas.Grouper.html#pandas.Grouper) have the same old problem of long parameter lists. The optional parameters would actually only be used in a couple of combinations and the API should have been exported via different methods or at least overloadings that are documented separately.
+
+Some options, like sort, are actually orthogonal functionalities that should have been decoupled from the Groupby component.
+
 ### Inconsistent behavior between Groupers and Groupby
+
+The semantics of Groupers and groupby() are subtly different and may lead to unexpected results. Grouper objects define a set of groups and then 
 
 ### Limitations of Groupby with mappings
 
