@@ -138,9 +138,9 @@ This difference is not found in the documentation, but might lead to horrible re
     # result:
     #                price
     #       date    
-    #    20181004  1000.0
-    #    20181005  1020.0
-    #    20181008   998.0
+    #    20181004    1000.0
+    #    20181005    1020.0
+    #    20181008     998.0
     #
 
     # Attempt 1 is prettier but the result is not what we wanted, attempt 2 yields the
